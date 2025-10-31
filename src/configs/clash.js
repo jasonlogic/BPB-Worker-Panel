@@ -163,20 +163,22 @@ function buildRoutingRules(isWarp) {
     routingRules.forEach(routingRule => {
         if (!routingRule.rule) return;
         const { type, domain, ip, ruleProvider } = routingRule;
-        const { geosite, geoip } = ruleProvider || {};
+        const { geosite, geoip, classical } = ruleProvider || {};
 
         if (!groupedRules.has(type)) groupedRules.set(type, {
             domain: [],
             ip: [],
             geosite: [],
-            geoip: []
+            geoip: [],
+            classical: []
         });
 
         if (domain) groupedRules.get(type).domain.push(domain);
         if (ip) groupedRules.get(type).ip.push(ip);
         if (geosite) groupedRules.get(type).geosite.push(geosite);
         if (geoip) groupedRules.get(type).geoip.push(geoip);
-        if (geosite || geoip) addRuleProvider(ruleProvider);
+        if (classical) groupedRules.get(type).geoip.push(classical);
+        if (geosite || geoip || classical) addRuleProvider(ruleProvider);
     });
 
     let rules = [`GEOIP,lan,DIRECT,no-resolve`];
@@ -187,10 +189,11 @@ function buildRoutingRules(isWarp) {
         rules.push("AND,((NETWORK,udp),(DST-PORT,443)),REJECT");
     }
 
-    function addRoutingRule(geosites, geoips, domains, ips, type) {
+    function addRoutingRule(classicals, geosites, geoips, domains, ips, type) {
         if (type?.toLowerCase() === 'pass') return;
         if (domains) domains.forEach(domain => rules.push(`DOMAIN-SUFFIX,${domain},${type}`));
         if (geosites) geosites.forEach(geosite => rules.push(`RULE-SET,${geosite},${type}`));
+        if (classicals) classicals.forEach(classical => rules.push(`RULE-SET,${classical},${type}`));
 
         if (ips) ips.forEach(value => {
             const ipType = isIPv4(value) ? 'IP-CIDR' : 'IP-CIDR6';
@@ -205,10 +208,11 @@ function buildRoutingRules(isWarp) {
     for (const [type, rule] of groupedRules) {
         const { domain, ip, geosite, geoip } = rule;
 
-        if (domain?.length) addRoutingRule(null, null, domain, null, type);
-        if (geosite?.length) addRoutingRule(geosite, null, null, null, type);
-        if (ip?.length) addRoutingRule(null, null, null, ip, type);
-        if (geoip?.length) addRoutingRule(null, geoip, null, null, type);
+        if (domain?.length) addRoutingRule(null, null, null, domain, null, type);
+        if (geosite?.length) addRoutingRule(null, geosite, null, null, null, type);
+        if (classical?.length) addRoutingRule(classical, null, null, null, null, type);
+        if (ip?.length) addRoutingRule(null, null, null, null, ip, type);
+        if (geoip?.length) addRoutingRule(null, null, geoip, null, null, type);
     }
 
     rules.push("MATCH,✅ Selector");
@@ -443,7 +447,7 @@ function buildChainOutbound() {
 async function buildConfig(outbounds, selectorTags, proxyTags, chainTags, isChain, isWarp, isPro) {
     const { rules, ruleProviders } = buildRoutingRules(isWarp);
     const config = {
-        "mixed-port": 7890,
+        "mixed-port": 10808,
         "ipv6": true,
         "allow-lan": false,
         "mode": "rule",
