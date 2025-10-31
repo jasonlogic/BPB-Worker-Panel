@@ -782,7 +782,7 @@ function getRuleProviders() {
         },
         {
             rule: settings.bypassChina,
-            type: 'DIRECT',
+            type: '💦 B D 🚀',
             dns: finalLocalDNS,
             ruleProvider: {
                 format: "yaml",
