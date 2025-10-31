@@ -31,6 +31,8 @@ async function buildDNS(isChain, isWarp, isPro) {
         "use-system-hosts": false,
         "nameserver": [`${isWarp ? '1.1.1.1' : settings.remoteDNS}#${remoteDnsDetour}`],
         "proxy-server-nameserver": [finalLocalDNS],
+        "direct-nameserver": [finalLocalDNS],
+        "direct-nameserver-follow-policy": false,
         "nameserver-policy": {
             "raw.githubusercontent.com": finalLocalDNS,
             "time.cloudflare.com": finalLocalDNS
@@ -99,7 +101,7 @@ async function buildDNS(isChain, isWarp, isPro) {
     if (isFakeDNS) Object.assign(dnsObject, {
         "enhanced-mode": "fake-ip",
         "fake-ip-range": "198.18.0.1/16",
-        "fake-ip-filter": ["*", "+.lan", "+.local"]
+        "fake-ip-filter": ["*", "RULE-SET:Fake-IP-Filter"]
     });
 
     return dnsObject;
@@ -136,7 +138,7 @@ function buildRoutingRules(isWarp) {
     const ruleProviders = {};
 
     function addRuleProvider(ruleProvider) {
-        const { geosite, geoip, geositeURL, geoipURL, format } = ruleProvider;
+        const { classical, geosite, geoip, geositeURL, geoipURL, format, classicalURL } = ruleProvider;
         const fileExtension = format === 'text' ? 'txt' : format;
 
         const defineProvider = (type, behavior, url) => {
@@ -151,6 +153,7 @@ function buildRoutingRules(isWarp) {
             };
         };
 
+        defineProvider(classical, 'classical', classicalURL);
         defineProvider(geosite, 'domain', geositeURL);
         defineProvider(geoip, 'ipcidr', geoipURL);
     }
@@ -441,9 +444,9 @@ async function buildConfig(outbounds, selectorTags, proxyTags, chainTags, isChai
     const config = {
         "mixed-port": 7890,
         "ipv6": true,
-        "allow-lan": true,
+        "allow-lan": false,
         "mode": "rule",
-        "log-level": "warning",
+        "log-level": "silent",
         "disable-keep-alive": false,
         "keep-alive-idle": 10,
         "keep-alive-interval": 15,
@@ -454,6 +457,7 @@ async function buildConfig(outbounds, selectorTags, proxyTags, chainTags, isChai
         "external-controller": "127.0.0.1:9090",
         "external-ui-url": "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip",
         "external-ui": "ui",
+        "secret": "xGTW2tlSB4U@fCM",
         "external-controller-cors": {
             "allow-origins": ["*"],
             "allow-private-network": true
@@ -692,6 +696,24 @@ function getRuleProviders() {
         : `${settings.localDNS}#DIRECT`;
 
     return [
+        {
+            rule: true,
+            type: 'DIRECT',
+            ruleProvider: {
+                format: "yaml",
+                classical: "BaiduExclude",
+                classicalURL: "https://git.whohe.eu.org/github.com/unexpecteds/Other/blob/main/Clash/BaiduExclude.yaml",
+            }
+        },
+        {
+            rule: true,
+            type: 'REJECT',
+            ruleProvider: {
+                format: "mrs",
+                geosite: "Fake-IP-Filter",
+                geositeURL: "https://git.whohe.eu.org/github.com/DustinWin/ruleset_geodata/raw/refs/heads/mihomo-ruleset/fakeip-filter.mrs",
+            }
+        },
         {
             rule: true,
             type: 'REJECT',
