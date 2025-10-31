@@ -188,6 +188,7 @@ function buildRoutingRules(isWarp) {
     }
 
     function addRoutingRule(geosites, geoips, domains, ips, type) {
+        if (type?.toLowerCase() === 'pass') return;
         if (domains) domains.forEach(domain => rules.push(`DOMAIN-SUFFIX,${domain},${type}`));
         if (geosites) geosites.forEach(geosite => rules.push(`RULE-SET,${geosite},${type}`));
 
@@ -204,10 +205,10 @@ function buildRoutingRules(isWarp) {
     for (const [type, rule] of groupedRules) {
         const { domain, ip, geosite, geoip } = rule;
 
-        if (domain.length) addRoutingRule(null, null, domain, null, type);
-        if (geosite.length) addRoutingRule(geosite, null, null, null, type);
-        if (ip.length) addRoutingRule(null, null, null, ip, type);
-        if (geoip.length) addRoutingRule(null, geoip, null, null, type);
+        if (domain?.length) addRoutingRule(null, null, domain, null, type);
+        if (geosite?.length) addRoutingRule(geosite, null, null, null, type);
+        if (ip?.length) addRoutingRule(null, null, null, ip, type);
+        if (geoip?.length) addRoutingRule(null, geoip, null, null, type);
     }
 
     rules.push("MATCH,✅ Selector");
