@@ -177,7 +177,7 @@ function buildRoutingRules(isWarp) {
         if (ip) groupedRules.get(type).ip.push(ip);
         if (geosite) groupedRules.get(type).geosite.push(geosite);
         if (geoip) groupedRules.get(type).geoip.push(geoip);
-        if (classical) groupedRules.get(type).geoip.push(classical);
+        if (classical) groupedRules.get(type).classical.push(classical);
         if (geosite || geoip || classical) addRuleProvider(ruleProvider);
     });
 
@@ -206,7 +206,7 @@ function buildRoutingRules(isWarp) {
     }
 
     for (const [type, rule] of groupedRules) {
-        const { domain, ip, geosite, geoip } = rule;
+        const { domain, ip, geosite, geoip, classical } = rule;
 
         if (domain?.length) addRoutingRule(null, null, null, domain, null, type);
         if (geosite?.length) addRoutingRule(null, geosite, null, null, null, type);
