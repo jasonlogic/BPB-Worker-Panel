@@ -712,6 +712,15 @@ function getRuleProviders() {
         },
         {
             rule: true,
+            type: 'DIRECT',
+            ruleProvider: {
+                format: "yaml",
+                classical: "BaiduEx",
+                classicalURL: "https://git.whohe.eu.org/github.com/unexpecteds/Other/blob/main/Clash/BaiduExclude.yaml",
+            }
+        },
+        {
+            rule: true,
             type: 'pass',
             ruleProvider: {
                 format: "mrs",
