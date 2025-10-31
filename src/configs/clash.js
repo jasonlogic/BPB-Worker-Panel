@@ -708,7 +708,7 @@ function getRuleProviders() {
         },
         {
             rule: true,
-            type: 'REJECT',
+            type: 'pass',
             ruleProvider: {
                 format: "mrs",
                 geosite: "Fake-IP-Filter",
