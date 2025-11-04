@@ -82,17 +82,17 @@ async function buildDNS(isChain, isWarp, isPro) {
     });
 
     for (const { rule, ruleProvider, type, dns } of routingRules) {
-        if (!rule || !ruleProvider?.geosite) continue;
-        const { geosite } = ruleProvider;
+        if (!rule || !ruleProvider?.geosite || !ruleProvider?.classical) continue;
+        const { geosite, classical } = ruleProvider;
 
         if (type?.toUpperCase() === 'DIRECT') {
-            dnsObject["nameserver-policy"][`rule-set:${geosite}`] = dns;
+            dnsObject["nameserver-policy"][`rule-set:${geosite || classical}`] = dns;
         } else if (type?.toUpperCase() === 'REJECT') {
             if (!dnsObject["hosts"]) {
                 dnsObject["hosts"] = {};
             }
 
-            dnsObject["hosts"][`rule-set:${geosite}`] = "rcode://refused";
+            dnsObject["hosts"][`rule-set:${geosite || classical}`] = "rcode://refused";
         }
     }
 
