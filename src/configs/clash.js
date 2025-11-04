@@ -85,9 +85,9 @@ async function buildDNS(isChain, isWarp, isPro) {
         if (!rule || !ruleProvider?.geosite) continue;
         const { geosite } = ruleProvider;
 
-        if (type === 'DIRECT') {
+        if (type?.toUpperCase() === 'DIRECT') {
             dnsObject["nameserver-policy"][`rule-set:${geosite}`] = dns;
-        } else {
+        } else if (type?.toUpperCase() === 'REJECT') {
             if (!dnsObject["hosts"]) {
                 dnsObject["hosts"] = {};
             }
