@@ -82,7 +82,7 @@ async function buildDNS(isChain, isWarp, isPro) {
     });
 
     for (const { rule, ruleProvider, type, dns } of routingRules) {
-        if (!rule || !ruleProvider?.geosite || !ruleProvider?.classical) continue;
+        if (!rule || (!ruleProvider?.geosite && !ruleProvider?.classical)) continue;
         const { geosite, classical } = ruleProvider;
 
         if (type?.toUpperCase() === 'DIRECT') {
