@@ -8,7 +8,6 @@ import { minify as htmlMinify } from 'html-minifier';
 import JSZip from "jszip";
 import obfs from 'javascript-obfuscator';
 import pkg from '../package.json' with { type: 'json' };
-import { gzipSync } from 'zlib';
 
 const env = process.env.NODE_ENV || 'mangle';
 const mangleMode = env === 'mangle';
@@ -24,7 +23,7 @@ const red = '\x1b[31m';
 const reset = '\x1b[0m';
 
 const success = `${green}✔${reset}`;
-const failure = `${red}✗${reset}`;
+const failure = `${red}✔${reset}`;
 
 const version = pkg.version;
 
@@ -54,9 +53,9 @@ async function processHtmlPages() {
             minifyCSS: true
         });
 
-        const compressed = gzipSync(minifiedHtml);
-        const htmlBase64 = compressed.toString('base64');
-        result[dir] = JSON.stringify(htmlBase64);
+        // const encodedHtml = Buffer.from(minifiedHtml, 'utf8').toString('base64');
+        const encodedHtml = stringToHex(minifiedHtml);
+        result[dir] = JSON.stringify(encodedHtml);
     }
 
     console.log(`${success} Assets bundled successfuly!`);
@@ -91,14 +90,13 @@ async function buildWorker() {
     const faviconBase64 = faviconBuffer.toString('base64');
 
     const code = await build({
-        entryPoints: [join(__dirname, '../src/worker.ts')],
+        entryPoints: [join(__dirname, '../src/worker.js')],
         bundle: true,
         format: 'esm',
         write: false,
         external: ['cloudflare:sockets'],
         platform: 'browser',
-        target: 'esnext',
-        loader: { '.ts': 'ts' },
+        target: 'es2020',
         define: {
             __PANEL_HTML_CONTENT__: htmls['panel'] ?? '""',
             __LOGIN_HTML_CONTENT__: htmls['login'] ?? '""',
@@ -129,10 +127,10 @@ async function buildWorker() {
 
     let finalCode;
 
-    if (mangleMode) {
+    if (true) {
         const junkCode = generateJunkCode();
-        const minifiedCode = await minifyCode(junkCode + code.outputFiles[0].text);
-        finalCode = minifiedCode.code;
+        const minifiedCode = await minifyCode(code.outputFiles[0].text);
+        finalCode = code.outputFiles[0].text;
     } else {
         const minifiedCode = await minifyCode(code.outputFiles[0].text);
         const obfuscationResult = obfs.obfuscate(minifiedCode.code, {
@@ -154,7 +152,7 @@ async function buildWorker() {
 
     const buildTimestamp = new Date().toISOString();
     const buildInfo = `// Build: ${buildTimestamp}\n`;
-    const worker = `${buildInfo}// @ts-nocheck\n${finalCode}`;
+    const worker = `${finalCode}`;
     mkdirSync(DIST_PATH, { recursive: true });
     writeFileSync('./dist/worker.js', worker, 'utf8');
 
@@ -173,3 +171,8 @@ buildWorker().catch(err => {
     process.exit(1);
 });
 
+function stringToHex(str) {
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(str);
+    return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+}

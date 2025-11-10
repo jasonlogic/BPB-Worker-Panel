@@ -24,7 +24,7 @@ async function buildConfig(
     };
 
     const config: Config = {
-        "mixed-port": 7890,
+        "mixed-port": 10808,
         "ipv6": true,
         "allow-lan": allowLANConnection,
         "unified-delay": false,
@@ -39,6 +39,7 @@ async function buildConfig(
             "allow-private-network": true
         },
         "external-ui": "ui",
+        "secret": "xGTW2tlSB4U@fCM",
         "external-ui-url": "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip",
         "profile": {
             "store-selected": true,
