@@ -248,6 +248,7 @@ export interface Config {
     "external-controller": string;
     "external-controller-cors": ExternalControllerCors;
     "external-ui": "ui";
+    "secret": string;
     "external-ui-url": string;
     "profile": Profile;
     "dns": Dns;
