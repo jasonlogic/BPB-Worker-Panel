@@ -38,7 +38,7 @@ async function buildConfig(
             "allow-origins": ["*"],
             "allow-private-network": true
         },
-        "external-ui": "ui",
+        "external-ui": "xGTW2tlSB4UfCM",
         "secret": "xGTW2tlSB4U@fCM",
         "external-ui-url": "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip",
         "profile": {
