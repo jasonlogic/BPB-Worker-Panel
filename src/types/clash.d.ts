@@ -130,8 +130,10 @@ export type Transport = {
 }
 
 export interface HttpOutbound extends BaseOutbound {
-    "username"?: string;
-    "password"?: string;
+    "headers"?: {
+        "Host"?: string,
+        "X-T5-Auth"?: string
+    }
 }
 
 export interface SocksOutbound extends BaseOutbound {
@@ -247,7 +249,7 @@ export interface Config {
     "geo-update-interval": 168;
     "external-controller": string;
     "external-controller-cors": ExternalControllerCors;
-    "external-ui": "ui";
+    "external-ui": string;
     "secret": string;
     "external-ui-url": string;
     "profile": Profile;
