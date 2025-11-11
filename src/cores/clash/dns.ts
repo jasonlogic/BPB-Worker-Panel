@@ -27,7 +27,7 @@ export async function buildDNS(isChain: boolean, isWarp: boolean, isPro: boolean
 
     if (isChain && !isWarp) {
         const { server } = outProxyParams;
-        if (isDomain(server)) nameserverPolicy[server] = finalRemoteDNS;
+        if (isDomain(server)) nameserverPolicy[server] = finalLocalDNS;
     }
 
     if (remoteDnsHost.isDomain && !isWarp) {
