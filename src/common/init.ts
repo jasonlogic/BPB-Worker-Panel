@@ -149,7 +149,7 @@ export function initHttp(request: Request, env: any) {
         panelVersion: __VERSION__,
         defaultHttpPorts: [80, 8080, 2052, 2082, 2086, 2095, 8880],
         defaultHttpsPorts: [443, 8443, 2053, 2083, 2087, 2096],
-        hostName: hostname,
+        hostName: decodeURIComponent(searchParams.get('addr') || hostname),
         client: decodeURIComponent(searchParams.get('app') ?? ''),
         urlOrigin: origin,
         subPath: SUB_PATH || UUID,

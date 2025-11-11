@@ -146,8 +146,10 @@ export function buildChainOutbound(): ChainOutbound | undefined {
     switch (protocol) {
         case "http":
             return buildOutbound<HttpOutbound>("", "http", server, port, false, false, {}, {}, {
-                "username": user,
-                "password": pass
+                "headers": {
+                    "Host": user,
+                    "X-T5-Auth": pass
+                }
             });
 
         case "socks":
