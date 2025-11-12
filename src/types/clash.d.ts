@@ -216,7 +216,7 @@ export type Outbound =
     | DirectOutbound
     | DnsOutbound;
 
-export type ChainOutbound = Exclude<Outbound, WireguardOutbound>;
+export type ChainOutbound = Exclude<Outbound, WireguardOutbound | DnsOutbound | DirectOutbound>;
 
 export interface RuleProvider {
     "type": "http";
