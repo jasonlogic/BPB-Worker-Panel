@@ -9,7 +9,7 @@ export type Protocol =
     | "trojan"
     | "vmess"
     | "wireguard"
-    | "direct";
+    | "direct"
     | "dns";
 
 export type Fingerprint =
@@ -131,6 +131,12 @@ export type Transport = {
     "grpc-opts"?: GrpcOpts;
 }
 
+export interface DnsOutbound extends Pick<BaseOutbound, "name" | "type"> {    
+}
+
+export interface DirectOutbound extends Pick<BaseOutbound, "name" | "type" | "udp"> {
+}
+
 export interface HttpOutbound extends BaseOutbound {
     "headers"?: {
         "Host"?: string,
@@ -207,7 +213,8 @@ export type Outbound =
     | VmessOutbound
     | TrojanOutbound
     | WireguardOutbound
-    | CustomOutbound;
+    | DirectOutbound
+    | DnsOutbound;
 
 export type ChainOutbound = Exclude<Outbound, WireguardOutbound>;
 

@@ -7,6 +7,8 @@ import {
     VlessOutbound,
     TrojanOutbound,
     WireguardOutbound,
+    DirectOutbound,
+    DnsOutbound,
     WsOpts,
     GrpcOpts,
     HttpOpts,
@@ -50,9 +52,9 @@ export function buildWebsocketOutbound(
     remark: string,
     address: string,
     port: number,
-): VlessOutbound | TrojanOutbound | null {
+): DnsOutbound | DirectOutbound | VlessOutbound | TrojanOutbound | null {
     const {
-        dict: { _VL_, _TR_ },
+        dict: { _DN_, _DR_, _VL_, _TR_ },
         globalConfig: { userID, TrPass },
         settings: { fingerprint, enableTFO, enableIPv6 }
     } = globalThis;
@@ -65,6 +67,14 @@ export function buildWebsocketOutbound(
     const transport = buildTransport("ws", undefined, generateWsPath(protocol), host, undefined, 2560);
 
     if (protocol === _VL_) return buildOutbound<VlessOutbound>(remark, protocol, address, port, enableIPv6, enableTFO, tls, transport, {
+        "uuid": userID,
+        "packet-encoding": ""
+    });
+    if (protocol === _DN_) return buildOutbound<DnsOutbound>(remark, protocol, address, port, enableIPv6, enableTFO, tls, transport, {
+        "uuid": userID,
+        "packet-encoding": ""
+    });
+    if (protocol === _DR_) return buildOutbound<DirectOutbound>(remark, protocol, address, port, enableIPv6, enableTFO, tls, transport, {
         "uuid": userID,
         "packet-encoding": ""
     });

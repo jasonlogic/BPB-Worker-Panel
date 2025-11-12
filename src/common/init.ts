@@ -2,6 +2,8 @@ import { getDataset } from "kv";
 import { isValidUUID } from "@common";
 
 globalThis.dict = {
+    _DN_: "dns",
+    _DR_: "direct",
     _VL_: atob('dmxlc3M='),
     _VL_CAP_: atob('VkxFU1M='),
     _VM_: atob('dm1lc3M='),
