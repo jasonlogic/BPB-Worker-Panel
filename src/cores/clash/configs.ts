@@ -93,14 +93,15 @@ export async function getClNormalConfig(): Promise<Response> {
             ); 
 
         let chainTag = "";
-        let chain = structuredClone(chainProxy);
+        let chain = structuredClone(chainProxy) as Outbound;
         chainTag = "d-bj";
         chain['name'] = chainTag;
         chain['server'] = "220.181.33.174";
         chain['dialer-proxy'] = "-wap";
         outbounds.push(chain);
         chainTags.push(chainTag);
-        
+
+        chain = structuredClone(chainProxy) as Outbound;
         chainTag = "d-gd";
         chain['name'] = chainTag;
         chain['server'] = "14.215.182.75";
