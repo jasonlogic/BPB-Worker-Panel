@@ -8,7 +8,9 @@ export type Protocol =
     | "vless"
     | "trojan"
     | "vmess"
-    | "wireguard";
+    | "wireguard"
+    | "direct";
+    | "dns";
 
 export type Fingerprint =
     | "chrome"
@@ -99,10 +101,10 @@ export interface HttpOpts {
 export interface BaseOutbound {
     "name": string;
     "type": Protocol;
-    "server": string;
-    "port": number;
-    "udp": boolean;
-    "ip-version": "ipv4" | "ipv4-prefer";
+    "server"?: string;
+    "port"?: number;
+    "udp"?: boolean;
+    "ip-version"?: "ipv4" | "ipv4-prefer";
     "tfo"?: true;
     "dialer-proxy"?: string;
 }
@@ -204,7 +206,8 @@ export type Outbound =
     | VlessOutbound
     | VmessOutbound
     | TrojanOutbound
-    | WireguardOutbound;
+    | WireguardOutbound
+    | CustomOutbound;
 
 export type ChainOutbound = Exclude<Outbound, WireguardOutbound>;
 
