@@ -107,6 +107,7 @@ export interface BaseOutbound {
     "ip-version"?: "ipv4" | "ipv4-prefer";
     "tfo"?: true;
     "dialer-proxy"?: string;
+    [key: string]: any;
 }
 
 export interface RealityOpts {
@@ -135,11 +136,9 @@ export type Transport = {
     "grpc-opts"?: GrpcOpts;
 }
 
-export interface DnsOutbound extends Pick<BaseOutbound, "name" | "type"> {    
-}
+export interface DnsOutbound extends BaseOutbound {}
 
-export interface DirectOutbound extends Pick<BaseOutbound, "name" | "type" | "udp"> {
-}
+export interface DirectOutbound extends BaseOutbound {}
 
 export interface HttpOutbound extends BaseOutbound {
     "headers"?: {
