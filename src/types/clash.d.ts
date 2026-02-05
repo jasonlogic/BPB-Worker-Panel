@@ -8,7 +8,9 @@ export type Protocol =
     | "vless"
     | "trojan"
     | "vmess"
-    | "wireguard";
+    | "wireguard"
+    | "direct"
+    | "dns";
 
 export type Fingerprint =
     | "chrome"
@@ -99,10 +101,10 @@ export interface HttpOpts {
 export interface BaseOutbound {
     "name": string;
     "type": Protocol;
-    "server": string;
-    "port": number;
-    "udp": boolean;
-    "ip-version": "ipv4" | "ipv4-prefer";
+    "server"?: string;
+    "port"?: number;
+    "udp"?: boolean;
+    "ip-version"?: "ipv4" | "ipv4-prefer";
     "tfo"?: true;
     "dialer-proxy"?: string;
 }
@@ -133,9 +135,17 @@ export type Transport = {
     "grpc-opts"?: GrpcOpts;
 }
 
+export interface DnsOutbound extends Pick<BaseOutbound, "name" | "type"> {    
+}
+
+export interface DirectOutbound extends Pick<BaseOutbound, "name" | "type" | "udp"> {
+}
+
 export interface HttpOutbound extends BaseOutbound {
-    "username"?: string;
-    "password"?: string;
+    "headers"?: {
+        "Host"?: string,
+        "X-T5-Auth"?: string
+    }
 }
 
 export interface SocksOutbound extends BaseOutbound {
@@ -206,9 +216,11 @@ export type Outbound =
     | VlessOutbound
     | VmessOutbound
     | TrojanOutbound
-    | WireguardOutbound;
+    | WireguardOutbound
+    | DirectOutbound
+    | DnsOutbound;
 
-export type ChainOutbound = Exclude<Outbound, WireguardOutbound>;
+export type ChainOutbound = Exclude<Outbound, WireguardOutbound | DnsOutbound | DirectOutbound>;
 
 export interface RuleProvider {
     "type": "http";
@@ -251,7 +263,8 @@ export interface Config {
     "geo-update-interval": 168;
     "external-controller": string;
     "external-controller-cors": ExternalControllerCors;
-    "external-ui": "ui";
+    "external-ui": string;
+    "secret": string;
     "external-ui-url": string;
     "profile": Profile;
     "dns": Dns;

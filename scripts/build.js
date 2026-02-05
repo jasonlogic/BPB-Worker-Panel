@@ -129,10 +129,10 @@ async function buildWorker() {
 
     let finalCode;
 
-    if (mangleMode) {
+    if (true) {
         const junkCode = generateJunkCode();
         const minifiedCode = await minifyCode(junkCode + code.outputFiles[0].text);
-        finalCode = minifiedCode.code;
+        finalCode = code.outputFiles[0].text;
     } else {
         const minifiedCode = await minifyCode(code.outputFiles[0].text);
         const obfuscationResult = obfs.obfuscate(minifiedCode.code, {
@@ -154,7 +154,7 @@ async function buildWorker() {
 
     const buildTimestamp = new Date().toISOString();
     const buildInfo = `// Build: ${buildTimestamp}\n`;
-    const worker = `${buildInfo}// @ts-nocheck\n${finalCode}`;
+    const worker = `${finalCode}`;
     mkdirSync(DIST_PATH, { recursive: true });
     writeFileSync('./dist/worker.js', worker, 'utf8');
 
@@ -172,4 +172,3 @@ buildWorker().catch(err => {
     console.error(`${failure} Build failed:`, err);
     process.exit(1);
 });
-

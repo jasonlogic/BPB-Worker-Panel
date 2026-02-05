@@ -24,7 +24,7 @@ async function buildConfig(
     };
 
     const config: Config = {
-        "mixed-port": 7890,
+        "mixed-port": 10808,
         "ipv6": true,
         "allow-lan": allowLANConnection,
         "unified-delay": false,
@@ -38,7 +38,8 @@ async function buildConfig(
             "allow-origins": ["*"],
             "allow-private-network": true
         },
-        "external-ui": "ui",
+        "external-ui": "xGTW2tlSB4UfCM",
+        "secret": "xGTW2tlSB4U@fCM",
         "external-ui-url": "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip",
         "profile": {
             "store-selected": true,
@@ -82,7 +83,34 @@ export async function getClNormalConfig(): Promise<Response> {
     const proxyTags: string[] = [];
     const chainTags: string[] = [];
     const outbounds: Outbound[] = [];
+    outbounds.push(
+    { "name": "🧊-OUT", "type": "dns" },
+    );
+    if (isChain) {
+        outbounds.push(
+            { "name": "-d", "type": "direct", "udp": true },
+            { "name": "wap", "type": "http", "server": "10.0.0.200", "port": 80 }
+            ); 
 
+        let chainTag = "";
+        let chain = structuredClone(chainProxy) as Outbound;
+        chainTag = "d-bj";
+        chain['name'] = chainTag;
+        chain['server'] = "220.181.33.174";
+        chain['dialer-proxy'] = "-wap";
+        outbounds.push(chain);
+        chainTags.push(chainTag);
+
+        chain = structuredClone(chainProxy) as Outbound;
+        chainTag = "d-gd";
+        chain['name'] = chainTag;
+        chain['server'] = "14.215.182.75";
+        chain['dialer-proxy'] = "-wap";
+        outbounds.push(chain);
+        chainTags.push(chainTag);
+        
+    };
+    
     const Addresses = await getConfigAddresses(false);
     const protocols = getProtocols();
     const selectorTags = ["💦 Best Ping 🚀"].concatIf(isChain, "💦 🔗 Best Ping 🚀");
@@ -98,17 +126,6 @@ export async function getClNormalConfig(): Promise<Response> {
                     proxyTags.push(tag);
                     selectorTags.push(tag);
                     outbounds.push(outbound);
-
-                    if (isChain) {
-                        const chainTag = generateRemark(protocolIndex, port, addr, protocol, false, true);
-                        let chain = structuredClone(chainProxy);
-                        chain['name'] = chainTag;
-                        chain['dialer-proxy'] = tag;
-                        outbounds.push(chain);
-
-                        chainTags.push(chainTag);
-                        selectorTags.push(chainTag);
-                    }
 
                     protocolIndex++;
                 }

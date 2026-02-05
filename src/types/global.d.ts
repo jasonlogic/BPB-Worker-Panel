@@ -145,6 +145,8 @@ declare global {
     var httpConfig: HttpConfig;
     var wsConfig: WsConfig;
     var dict: {
+        readonly _DN_: string;
+        readonly _DR_: string;
         readonly _VL_: string;
         readonly _VL_CAP_: string;
         readonly _VM_: string;
